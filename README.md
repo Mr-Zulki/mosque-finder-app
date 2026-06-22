@@ -20,7 +20,7 @@ A fast, lightweight Flutter app to find nearby mosques — built for Android. Fe
 
 - 🕌 **Nearby Mosques** — Finds 80+ mosques sorted by distance using Overpass API
 - 🧭 **Qibla Direction** — Live compass pointing toward Mecca
-- 🕐 **Prayer Times** — Next prayer countdown with Asr/Fajr/Dhuhr/Maghrib/Isha
+- 🕐 **Prayer Times** — Next prayer countdown with Fajr/Dhuhr/Asr/Maghrib/Isha
 - 🗺️ **Google Maps** — Interactive map with mosque markers
 - 🚗 **One-Tap Navigation** — Opens Google Maps for directions
 - 📖 **Quran Resources** — Surah list and recitation links
