@@ -11,6 +11,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:permission_handler/permission_handler.dart';
+import 'dart:io';
 
 // --- DATA CLASSES ---
 
@@ -40,9 +41,19 @@ class Mosque {
   });
 }
 
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
+
 // --- MAIN ENTRANCE ---
 
 void main() {
+  HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
 }
 
@@ -246,11 +257,11 @@ class _MosqueFinderShellState extends State<MosqueFinderShell>
     final now = DateTime.now();
     final date = "${now.day}-${now.month}-${now.year}";
     final url = Uri.parse(
-      "http://api.aladhan.com/v1/timings/$date?latitude=$lat&longitude=$lng&method=1",
+      "https://api.aladhan.com/v1/timings/$date?latitude=$lat&longitude=$lng&method=1",
     );
 
     try {
-      final response = await http.get(url);
+      final response = await http.get(url).timeout(const Duration(seconds: 10));
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final timings = data['data']['timings'];
@@ -686,8 +697,11 @@ out center;
       final response = await http.post(
         url,
         body: query,
-        headers: {"Content-Type": "application/x-www-form-urlencoded"},
-      );
+        headers: {
+          "Accept": "application/json",
+          "User-Agent": "MosqueFinderApp/1.0",
+        },
+      ).timeout(const Duration(seconds: 15));
 
       if (response.statusCode == 200) {
         final data = json.decode(utf8.decode(response.bodyBytes));
@@ -759,7 +773,7 @@ out center;
     } catch (e) {
       if (mounted) {
         setState(() {
-          _errorMessage = "Network Error. Please check connection.";
+          _errorMessage = "Error: $e";
           _isLoading = false;
         });
       }

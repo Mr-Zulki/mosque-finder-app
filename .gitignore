@@ -43,3 +43,23 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Build outputs
+
+
+# Dart/Flutter
+
+.metadata
+flutter_01.log
+
+# IDE
+
+# Local configuration
+local.properties
+
+/build/
+.dart_tool/
+.flutter-plugins-dependencies
+.metadata
+flutter_01.log
+.idea/

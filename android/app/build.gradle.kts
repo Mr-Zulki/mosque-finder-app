@@ -1,19 +1,25 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.inputStream().use { localProperties.load(it) }
 }
 
 android {
     namespace = "com.mosquefinder.mvp.mosque_finder"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-        // --- ADDED THIS LINE TO FIX NOTIFICATION ERROR ---
         isCoreLibraryDesugaringEnabled = true
     }
 
@@ -23,19 +29,16 @@ android {
 
     defaultConfig {
         applicationId = "com.mosquefinder.mvp.mosque_finder"
-        // MinSdk 21 is required for both Google Maps and Local Notifications
-        minSdk = 21 
-        targetSdk = flutter.targetSdkVersion
+        minSdk = flutter.minSdkVersion
+        targetSdk = 34
         versionCode = flutter.versionCode
         versionName = flutter.versionName
 
-        // Google Maps API Key Placeholder
-        manifestPlaceholders["MAPS_API_KEY"] = System.getenv("MAPS_API_KEY") ?: "AIzaSyCdtq2WitrxXh_oH5FTMAv4-P7zOJrAOmA"
+        manifestPlaceholders["MAPS_API_KEY"] = localProperties.getProperty("MAPS_API_KEY") ?: ""
     }
 
     buildTypes {
         release {
-            // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
         }
     }
@@ -45,7 +48,6 @@ flutter {
     source = "../.."
 }
 
-// --- ADDED THIS BLOCK AT THE BOTTOM ---
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
